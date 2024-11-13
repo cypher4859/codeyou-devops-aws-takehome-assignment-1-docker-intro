@@ -1,5 +1,4 @@
 # Docker Intro - Take Home Assignment
-
 ### Due Date: One week from today
 
 #### Objective:
@@ -8,31 +7,38 @@ The purpose of this assignment is to reinforce your understanding of Docker and 
 ### Tasks:
 
 1. **Pulling Docker Images**
-    - Pull the latest version of the following Docker images: `nginx`, `alpine`, and `ubuntu`.
+- Pull the latest version of the following Docker images: `redis`, `alpine`, and `ubuntu`.
     - Verify that the images have been downloaded successfully by listing all images on your system.
     - **Command Reference**: Use `docker image pull` and `docker image ls`.
 
 2. **Running Containers**
-    - Create and start a container for each of the images (`nginx`, `alpine`, and `ubuntu`).
-    - For `nginx`, run it in detached mode so it continues running in the background.
-    - For `alpine` and `ubuntu`, start them interactively, and use `/bin/sh` to get a shell inside the container.
-    - **Command Reference**: Use `docker container run -d` for `nginx` and `docker container run -it` for `alpine` and `ubuntu`.
+- Create and start a container for each of the images (`redis`, `alpine`, and `ubuntu`).
+  - For `redis`, run it in detached mode so it continues running in the background for later investigation.
+  - For `alpine`, start it interactively and use `/bin/sh` to get a shell inside the container.
+    - Once inside the Alpine container, run `ls` to list all files at the root (`/`) directory.
+  - For `ubuntu`, start it interactively and use `/bin/sh` to get a shell inside the container.
+    - Once inside the Ubuntu container, run `ls` to list all the files at `/etc` directory.
+    - **Command Reference**: Use `docker container run -d` for `redis` and `docker container run -it alpine /bin/sh` or `docker container run -it ubuntu /bin/sh` for `alpine` and `ubuntu`. The `-t` means to allocate a terminal in the container. Most of the time these two option flags are used together as `-it`.
+- For the`redis` container, ensure that the container is started and install useful packages like `lsof`, `procps` (for `ps`), and `net-tools` (for networking commands). This will provide a more realistic service environment to investigate.
+    - You can install these packages by `apt update && apt install -y lsof procps` from the terminal in the container or by using `docker exec`. These packages aren't typically in the redis image because it's meant to be lightweight but they are default standard tools on most linux systems.
+    - **Command Reference**: Use `docker container run -d` for `redis` and `docker container run -it` for `alpine` and `ubuntu`.
 
 3. **Investigate Running Containers**
-    - List all the running containers on your system.
-    - Use `docker exec` to execute the `ps aux` command inside the `nginx` container to see which processes are running.
-    - Identify the Process ID (PID) and User ID (UID) of the main `nginx` process.
-    - **Command Reference**: Use `docker container ls`, `docker exec`, and `ps aux`.
+- List all the running containers on your system.
+- Use `docker exec` to execute the `ps aux` command inside the `redis` container to see which processes are running, including the Redis server. If you're already in a terminal within the container then just run `ps aux` instead. Make note of the `redis-server` process and it's PID
+- Ensure you have a terminal into the Redis container by using `docker exec`.
+  - Using the PID for the running Redis service, use `lsof -p <PID>` to find which files are currently open by the Redis process.
+- **Command Reference**: Use `docker container ls`, `docker exec`, `ps aux`, `lsof`.
 
 4. **Resource Monitoring**
-    - Use Docker to monitor the resource usage of your `nginx` container. Specifically, observe the CPU, memory, and network usage for a few seconds.
+    - Use Docker to monitor the resource usage of your `redis` container. Specifically, observe the CPU, memory, and network usage for a few seconds.
     - **BONUS**: How can you run the command to monitor resources without blocking the terminal? Document your findings.
     - **Command Reference**: Use `docker stats`.
 
 5. **Stopping and Removing Containers**
-    - Stop the `nginx` container that you started earlier.
-    - Remove the `nginx` container from your system.
-    - Verify that there are no `nginx` containers left using the list command.
+    - Stop the `redis` container that you started earlier.
+    - Remove the `redis` container from your system.
+    - Verify that there are no `redis` containers left using the list command.
     - **Command Reference**: Use `docker container stop`, `docker container rm`, and `docker container ls -a`.
 
 6. **Container Cleanup**
